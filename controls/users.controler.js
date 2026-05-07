@@ -1,0 +1,125 @@
+const asyncWrapper= require('../middlewares/asyncFunctions.handler.js');
+const httpStatus = require('../utils/HTTP.status.text.js');
+const appError = require('../utils/appError.js');
+const User = require('../models/users.model.js');
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken');
+const generateJWT = require('../utils/generateJWT.js');
+const userRoles = require('../utils/userRoles.js');
+
+const getAllUsers = asyncWrapper(async (req,res)=>{
+    const query = req.query;
+    //console.log(req.query);
+    const limit = query.limit || 10;
+    const page = query.page || 1 ;
+    const skip = (page-1)*limit;
+    const users = await User.find({},{"__v":false,"password":false}).limit(limit).skip(skip);
+    return res.status(200).json(  {status : httpStatus.SUCCESS ,data:   {users:users}   }   );
+
+})
+
+const getSingleUserInfo = asyncWrapper(async (req,res,next)=>{
+    const userId = req.status.userId;
+    const user = await User.findById(userId,{"password":false,"__v":false});
+    if(!user){
+        const error = appError.create("user not found",404,httpStatus.FAIL);
+        return next(error);
+    }
+    res.status(200).json({status:httpStatus.SUCCESS,data:{
+        user
+    }})
+})
+
+const register = asyncWrapper( async (req,res,next)=>{
+    console.log("request :   ",req.body);
+    console.log("request file : ",req.file); // this attribute created by multer (upload) from routes file
+    const{firstName,lastName,email,password,role} = req.body;
+    const oldUser = await User.findOne({email});
+    if(oldUser){
+        const error = appError.create(`user with email ${req.body.email} is already exist`,400,httpStatus.FAIL);
+        return next(error);
+    } 
+    //password hashing
+    // using bcrypt.js  package
+    //npm install bcryptjs
+    // uncomment after download bcrypt.js-\/
+    const hashPassword = await bcrypt.hash(password,10);
+    const newUser = new User({
+        firstName,
+        lastName,
+        email,
+        password:hashPassword,
+        avatar: req.file.filename,
+        bio
+    })
+
+    //create jwt token
+    //jwt.sign("payload","secret key must store in .env file",option like expire time(secounds : s, minutes : m, days : d))
+    //require('crypto').randomBytes(32).toString('hex')
+    const token = await generateJWT({email:newUser.email,id:newUser._id,role:newUser.role});
+    //newUser.token=token;
+    await newUser.save();
+    res.status(201).json({status:httpStatus.SUCCESS,data:{token}})
+     
+})
+
+const login = asyncWrapper( async (req,res,next)=>{
+    const {email,password} = req.body;
+    if(!email || !password){
+        const error = appError.create('email and password are required',400,httpStatus.FAIL)
+        return next(error);
+    }
+    const user = await User.findOne({email});
+    if(!user){
+        const error = appError.create('Invalid email or password',401,httpStatus.ERROR);
+        return next(error); 
+    }
+    const matchedPassword = await bcrypt.compare(password,user.password)
+    //const matchedPassword = (password==user.password);
+    if(user && matchedPassword){
+        const token = await generateJWT({email:user.email,id:user._id,role:user.role});
+        return res.status(200).json(  {status : httpStatus.SUCCESS ,data:   {token:token}   }   );
+    }else{
+        const error = appError.create('Invalid email or password',401,httpStatus.ERROR);
+        return next(error); 
+    }
+})
+
+const deleteAccount =asyncWrapper(async (req,res,next)=>{
+    const userId = req.params.userId;
+    const usertoDelete = await User.findByIdAndDelete(userId);
+    res.status(200).json({status:httpStatus.SUCCESS,data:{message:'user deleted successfuly'}});
+})
+
+const updateAccountInfo = asyncWrapper(async (req,res,next)=>{
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+    if(!user){
+        const error = appError.create("user not found",404,httpStatus.FAIL);
+        return next(error);
+    }
+    const updates = req.body;
+    const invalidUpdates = ['password','_id','role','email'];
+    for(let field of invalidUpdates){
+        if(updates[field])
+            delete updates[field];
+    }
+    const updatedUser = await User.findByIdAndUpdate(userId,updates,{
+        new:true,
+        runValidators:true
+    }).select('-password');
+    if(!updatedUser){
+        const error = appError.create('server error',500,httpStatus.ERROR);
+        return next(error);
+    }
+    res.status(200).json({status:httpStatus.SUCCESS,data:{message:"user updated successfuly"}});
+})
+
+module.exports = {
+    getAllUsers,
+    getSingleUserInfo,
+    register,
+    login,
+    deleteAccount,
+    updateAccountInfo
+}
