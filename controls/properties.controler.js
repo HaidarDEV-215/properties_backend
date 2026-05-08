@@ -106,5 +106,23 @@ const propertiesSearch = asyncWrapper(async (req,res,next)=>{
     res.status(200).json({status:httpStatus.SUCCESS,data:{properties}});
 });
 
+const getMyProperties = asyncWrapper(async(req,res,next)=>{
+    const userId = req.params.UserId;
+    const properties = await Propertie.find({owner:userId},{"__v":false});
+    if(!properties){
+        const error = appError.create('no properties found',404,httpStatus.FAIL);
+        return next(error);
+    }
+    res.status(200).json({status:httpStatus.SUCCESS,data:{properties}});
+})
 
 
+module.exports = {
+    getAllProperties,
+    getMyProperties,
+    getSingleProperty,
+    updateProperty,
+    deleteProperty,
+    propertiesSearch,
+    addProperty
+}
