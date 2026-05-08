@@ -34,6 +34,30 @@ const addProperty = asyncWrapper(async (req,res,next)=>{
     res.status(201).json({status:httpStatus.SUCCESS,data:{newProperty}});
 });
 
+const updateProperty = asyncWrapper(async (req,res,next)=>{
+    const {title,category,area,city,price,purpose,description,images,status} = req.body;
+    const propId = req.params.propId;
+    const updatedProperty = await Propertie.findByIdAndUpdate(propId,{title,category,area,city,price,purpose,description,images,status},{
+        new:true,
+        runValidators:true
+    })
+    if(!updatedProperty){
+        const error = appError.create('this property cannot be found',404,httpStatus.FAIL);
+        return next(error);
+    }
+    res.status(200).json({status:httpStatus.SUCCESS,data:{updatedProperty}});
+});
+
+const deleteProperty = asyncWrapper(async(req,res,next)=>{
+    const propId = req.params.userId;
+    const proptoDelete = await User.findByIdAndDelete(userId);
+    if(!proptoDelete){
+        const error = appError.create('this property cannot be found',404,httpStatus.FAIL);
+        return next(error);
+    }
+    res.status(200).json({status:httpStatus.SUCCESS,data:{message:'user deleted successfuly'}});
+})
+
 const propertiesSearch = asyncWrapper(async (req,res,next)=>{
     const {title,category,area,city,price,purpose} = req.body;
     const query = req.query;//pagenation query
@@ -73,12 +97,14 @@ const propertiesSearch = asyncWrapper(async (req,res,next)=>{
             $gte:price + 1000000,
             $lte:price - 1000000
         }
-    }
+    };
     const properties = await Propertie.find(filtersQuery,{"__v":false}).limit(limit).skip(skip);
     if(!properties){
         const error = appError.create('no result found',404,httpStatus.FAIL);
         return next(error);
-    }
+    };
     res.status(200).json({status:httpStatus.SUCCESS,data:{properties}});
 });
+
+
 

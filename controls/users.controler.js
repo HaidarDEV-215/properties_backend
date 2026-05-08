@@ -85,6 +85,10 @@ const login = asyncWrapper( async (req,res,next)=>{
 const deleteAccount =asyncWrapper(async (req,res,next)=>{
     const userId = req.params.userId;
     const usertoDelete = await User.findByIdAndDelete(userId);
+    if(!usertoDelete){
+            const error = appError.create('this user cannot be found',404,httpStatus.FAIL);
+            return next(error);
+        }
     res.status(200).json({status:httpStatus.SUCCESS,data:{message:'user deleted successfuly'}});
 })
 
@@ -109,7 +113,7 @@ const updateAccountInfo = asyncWrapper(async (req,res,next)=>{
         const error = appError.create('server error',500,httpStatus.ERROR);
         return next(error);
     }
-    res.status(200).json({status:httpStatus.SUCCESS,data:{message:"user updated successfuly"}});
+    res.status(200).json({status:httpStatus.SUCCESS,data:{newUser :updatedUser,message:"user updated successfuly"}});
 })
 
 module.exports = {
