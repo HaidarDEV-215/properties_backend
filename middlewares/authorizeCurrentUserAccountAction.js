@@ -4,8 +4,8 @@ const userRoles = require("../utils/userRoles.js")
 
 const authorizeAction = (req,res,next)=>{
     const userIdFromParams = req.params.userId;
-    const currentUser = req.currenUser;
-    if(currentUser.id === userIdFromParams||currenUser.role ===userRoles.ADMIN){
+    const currentUser = req.currentUser;
+    if(currentUser.id === userIdFromParams||currentUser.role ===userRoles.ADMIN){
         next();
     }
     else{

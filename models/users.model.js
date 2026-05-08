@@ -30,6 +30,14 @@ const userSchema = new mongoose.Schema({
         enum :[userRoles.ADMIN,userRoles.USER,userRoles.MANAGER],
         default:userRoles.USER
     },
+    phone:{
+        type:String,
+        required:true
+    },
+    socialMediaLinks:{
+        type:[String],
+        default:[]
+    },
     avatar:{
         type:String ,
         default:'upload/binary-musk.png'

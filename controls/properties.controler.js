@@ -1,5 +1,5 @@
 const Propertie = require('../models/property.model.js');;
-const httpStatus = rquire('../utils/HTTP.status.text.js');
+const httpStatus = require('../utils/HTTP.status.text.js');
 const appError = require('../utils/appError.js');
 const asyncWrapper = require('../middlewares/asyncFunctions.handler.js');
 const { isIn } = require('validator');
@@ -49,8 +49,8 @@ const updateProperty = asyncWrapper(async (req,res,next)=>{
 });
 
 const deleteProperty = asyncWrapper(async(req,res,next)=>{
-    const propId = req.params.userId;
-    const proptoDelete = await User.findByIdAndDelete(userId);
+    const propId = req.params.propId;
+    const proptoDelete = await User.findByIdAndDelete(propId);
     if(!proptoDelete){
         const error = appError.create('this property cannot be found',404,httpStatus.FAIL);
         return next(error);
@@ -107,7 +107,7 @@ const propertiesSearch = asyncWrapper(async (req,res,next)=>{
 });
 
 const getMyProperties = asyncWrapper(async(req,res,next)=>{
-    const userId = req.params.UserId;
+    const userId = req.currenUser.id;
     const properties = await Propertie.find({owner:userId},{"__v":false});
     if(!properties){
         const error = appError.create('no properties found',404,httpStatus.FAIL);

@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
 const generateJWT = require('../utils/generateJWT.js');
 const userRoles = require('../utils/userRoles.js');
+const { isEmpty } = require('validator');
 
 const getAllUsers = asyncWrapper(async (req,res)=>{
     const query = req.query;
@@ -19,7 +20,7 @@ const getAllUsers = asyncWrapper(async (req,res)=>{
 })
 
 const getSingleUserInfo = asyncWrapper(async (req,res,next)=>{
-    const userId = req.status.userId;
+    const userId = req.params.userId;
     const user = await User.findById(userId,{"password":false,"__v":false});
     if(!user){
         const error = appError.create("user not found",404,httpStatus.FAIL);
@@ -33,7 +34,7 @@ const getSingleUserInfo = asyncWrapper(async (req,res,next)=>{
 const register = asyncWrapper( async (req,res,next)=>{
     console.log("request :   ",req.body);
     console.log("request file : ",req.file); // this attribute created by multer (upload) from routes file
-    const{firstName,lastName,email,password,role} = req.body;
+    const{firstName,lastName,email,password,role,bio,phone} = req.body;
     const oldUser = await User.findOne({email});
     if(oldUser){
         const error = appError.create(`user with email ${req.body.email} is already exist`,400,httpStatus.FAIL);
@@ -46,8 +47,9 @@ const register = asyncWrapper( async (req,res,next)=>{
         lastName,
         email,
         password:hashPassword,
-        avatar: req.file.filename,
-        bio
+        //avatar: req.file.filename,
+        bio,
+        phone
     })
 
     //create jwt token
@@ -95,15 +97,19 @@ const deleteAccount =asyncWrapper(async (req,res,next)=>{
 const updateAccountInfo = asyncWrapper(async (req,res,next)=>{
     const userId = req.params.userId;
     const user = await User.findById(userId);
+
     if(!user){
         const error = appError.create("user not found",404,httpStatus.FAIL);
         return next(error);
     }
     const updates = req.body;
+    console.log('updates : ',updates);
+    
     const invalidUpdates = ['password','_id','role','email'];
     for(let field of invalidUpdates){
-        if(updates[field])
+        if(updates[field]){
             delete updates[field];
+        }
     }
     const updatedUser = await User.findByIdAndUpdate(userId,updates,{
         new:true,

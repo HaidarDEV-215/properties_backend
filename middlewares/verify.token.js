@@ -11,8 +11,8 @@ const verifyToken = (req,res,next)=>{
     //split(' ')[1] will take the scound part of Authorization request header that is the token
     const token = auth.split(' ')[1];
     try{
-        const currenUser = jwt.verify(token,process.env.JWT_SECRET_KEY);
-        req.currenUser = currenUser;//request manipulation 'تلاعب بالطلب و اضافة خصائص
+        const currentUser = jwt.verify(token,process.env.JWT_SECRET_KEY);
+        req.currentUser = currentUser;//request manipulation 'تلاعب بالطلب و اضافة خصائص
         next();
     }catch(err){
         const error = appError.create(err.message,401,httpStatus.ERROR);
