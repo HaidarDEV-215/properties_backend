@@ -40,9 +40,6 @@ const register = asyncWrapper( async (req,res,next)=>{
         return next(error);
     } 
     //password hashing
-    // using bcrypt.js  package
-    //npm install bcryptjs
-    // uncomment after download bcrypt.js-\/
     const hashPassword = await bcrypt.hash(password,10);
     const newUser = new User({
         firstName,

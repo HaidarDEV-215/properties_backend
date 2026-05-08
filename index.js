@@ -4,6 +4,7 @@ const express = require('express');
 const path = require ('path');
 const mongoose = require('mongoose');
 const usersRouter = require('./routes/users.routes.js');
+const propertiesRouter = require('./routes/properties.routes.js');
 const httpStatusText = require('./utils/HTTP.status.text.js');
 const app= express();
 
@@ -23,6 +24,7 @@ app.use(express.json());
 
 // program routing
 app.use('/api/users',usersRouter);
+app.use('/api/Properties',propertiesRouter);
 
 //global middleware for not found routes
 app.all(/.*/,(req,res,next)=>{/////////// when an error in urls?
