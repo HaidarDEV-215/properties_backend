@@ -10,7 +10,6 @@ const propertySchema = mongoose.Schema({
     },
     description:{
         type:String,
-        required:true,
         trim:true
     },
     purpose:{
@@ -20,7 +19,7 @@ const propertySchema = mongoose.Schema({
     },
     category:{
         type:String,
-        enum:['appartment','house','land','office','shop','land'],
+        enum:['apartment','house','land','office','shop','land'],
         required:true
     },
     price:{

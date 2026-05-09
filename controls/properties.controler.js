@@ -2,8 +2,7 @@ const Propertie = require('../models/property.model.js');;
 const httpStatus = require('../utils/HTTP.status.text.js');
 const appError = require('../utils/appError.js');
 const asyncWrapper = require('../middlewares/asyncFunctions.handler.js');
-const { isIn } = require('validator');
-const { MongoCryptAzureKMSRequestError } = require('mongodb');
+const { MongoCryptAzureKMSRequestError, ReturnDocument } = require('mongodb');
 
 const getAllProperties = asyncWrapper(async (req,res,next)=>{
     const query = req.query;
@@ -11,7 +10,7 @@ const getAllProperties = asyncWrapper(async (req,res,next)=>{
     const page = query.page||1;
     const skip = (page-1)*limit;
     const properties = await Propertie.find({},{'__v':false}).limit(limit).skip(skip);
-    if(!properties){
+    if(properties.length === 0){
         const error = appError.create('no result found',404,httpStatus.FAIL);
         return next(error);
     }
@@ -20,7 +19,7 @@ const getAllProperties = asyncWrapper(async (req,res,next)=>{
 
 const getSingleProperty = asyncWrapper(async (req,res,next)=>{
     const propId = req.params.propId;
-    const property = Propertie.findById(propId);
+    const property = await Propertie.findById(propId);
     if(!property){
         const error = appError.create("no result found",404,httpStatus.FAIL);
         return next(error);
@@ -30,15 +29,22 @@ const getSingleProperty = asyncWrapper(async (req,res,next)=>{
 
 const addProperty = asyncWrapper(async (req,res,next)=>{
     const newProperty = new Propertie(req.body);
+    newProperty.owner = req.currentUser.id;
     await newProperty.save();
     res.status(201).json({status:httpStatus.SUCCESS,data:{newProperty}});
 });
-
+//{title,category,area,city,price,purpose,description,images,status}
 const updateProperty = asyncWrapper(async (req,res,next)=>{
-    const {title,category,area,city,price,purpose,description,images,status} = req.body;
+    const updates = req.body;
+    const invalidUpdates = [];
+    for(let element of invalidUpdates){
+        if(update[element]){
+            delete update[element];
+        }
+    }
     const propId = req.params.propId;
-    const updatedProperty = await Propertie.findByIdAndUpdate(propId,{title,category,area,city,price,purpose,description,images,status},{
-        new:true,
+    const updatedProperty = await Propertie.findByIdAndUpdate(propId,updates,{
+        returnDocument:'after',
         runValidators:true
     })
     if(!updatedProperty){
@@ -50,28 +56,28 @@ const updateProperty = asyncWrapper(async (req,res,next)=>{
 
 const deleteProperty = asyncWrapper(async(req,res,next)=>{
     const propId = req.params.propId;
-    const proptoDelete = await User.findByIdAndDelete(propId);
+    const proptoDelete = await Propertie.findByIdAndDelete(propId);
     if(!proptoDelete){
         const error = appError.create('this property cannot be found',404,httpStatus.FAIL);
         return next(error);
     }
-    res.status(200).json({status:httpStatus.SUCCESS,data:{message:'user deleted successfuly'}});
+    res.status(200).json({status:httpStatus.SUCCESS,data:{message:'property deleted successfuly'}});
 })
 
 const propertiesSearch = asyncWrapper(async (req,res,next)=>{
-    const {title,category,area,city,price,purpose} = req.body;
+    const {title,category,area,city,price,purpose} = req.body||{};
     const query = req.query;//pagenation query
-    const limit = query.limit;
-    const page = limit.page;
+    const limit = query.limit||10;
+    const page = limit.page||1;
     const skip = (page-1)*limit;
 
-    const filtersQuery = {};
+    const filtersQuery = {};//dinamic query
 
     //dinamic query builder for filers query.
     if(title){
         filtersQuery.title={//adding title attribute dinamicly to filtersQuery object
             $regex:title, // find result is like title in filters
-            $option:'i'//unsensitive for cahracter case.
+            $options:'i'//unsensitive for cahracter case.
         }
     };
     if(category){
@@ -80,7 +86,7 @@ const propertiesSearch = asyncWrapper(async (req,res,next)=>{
     if(city){
         filtersQuery.city={
             $regex:city, // find result is like title in filters
-            $option:'i'//unsensitive for cahracter case.
+            $options:'i'//unsensitive for cahracter case.
         }
     };
     if(purpose){
@@ -94,8 +100,8 @@ const propertiesSearch = asyncWrapper(async (req,res,next)=>{
     };
     if(price){
         filtersQuery.price ={
-            $gte:price + 1000000,
-            $lte:price - 1000000
+            $gte:price - 1000000,
+            $lte:price + 1000000
         }
     };
     const properties = await Propertie.find(filtersQuery,{"__v":false}).limit(limit).skip(skip);
@@ -107,7 +113,7 @@ const propertiesSearch = asyncWrapper(async (req,res,next)=>{
 });
 
 const getMyProperties = asyncWrapper(async(req,res,next)=>{
-    const userId = req.currenUser.id;
+    const userId = req.currentUser.id;
     const properties = await Propertie.find({owner:userId},{"__v":false});
     if(!properties){
         const error = appError.create('no properties found',404,httpStatus.FAIL);
@@ -115,7 +121,6 @@ const getMyProperties = asyncWrapper(async(req,res,next)=>{
     }
     res.status(200).json({status:httpStatus.SUCCESS,data:{properties}});
 })
-
 
 module.exports = {
     getAllProperties,

@@ -15,10 +15,10 @@ router.route('/:propId')
                 .delete(verifyToken,verifyOwnership,propertiesControls.deleteProperty)
                 .patch(verifyToken,verifyOwnership,propertiesControls.updateProperty)
 
-router.route('/my-properties')
+router.route('/users/my-properties')
                 .get(verifyToken,propertiesControls.getMyProperties)
 
-router.route('/search')
+router.route('/users/search')
                 .get(verifyToken,propertiesControls.propertiesSearch)
 
 module.exports = router;
