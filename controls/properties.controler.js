@@ -28,15 +28,21 @@ const getSingleProperty = asyncWrapper(async (req,res,next)=>{
 });
 
 const addProperty = asyncWrapper(async (req,res,next)=>{
+    //console.log("req.body.images",req.files);
     const newProperty = new Propertie(req.body);
+    for(let element of req.files){
+        //console.log(element.filename);
+        newProperty.images.push(element.filename)
+    }
+    //console.log("new property :  ",newProperty);
     newProperty.owner = req.currentUser.id;
     await newProperty.save();
     res.status(201).json({status:httpStatus.SUCCESS,data:{newProperty}});
 });
-//{title,category,area,city,price,purpose,description,images,status}
+
 const updateProperty = asyncWrapper(async (req,res,next)=>{
     const updates = req.body;
-    const invalidUpdates = [];
+    const invalidUpdates = ['owner'];
     for(let element of invalidUpdates){
         if(update[element]){
             delete update[element];

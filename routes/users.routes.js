@@ -4,15 +4,15 @@ const verifyToken = require('../middlewares/verify.token.js');
 const authorizeUserAction = require('../middlewares/authorizeCurrentUserAccountAction.js');
 const httpStatusText = require('../utils/HTTP.status.text.js');
 const router = express.Router();
-const multer = require('multer');
 const appError = require('../utils/appError.js');
+const multer = require('multer');
 
 
 //const upload = multer({dest:'uploads/'});
 const diskStorage = multer.diskStorage({
     destination: function(req,file,cb){
         console.log('FILE : ',file );
-        cb(null,'uploads') //callback <=> cb(error,destination folder)
+        cb(null,'uploads/users') //callback <=> cb(error,destination folder)
     },
     /*
     file object:{
