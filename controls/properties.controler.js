@@ -1,8 +1,10 @@
-const Propertie = require('../models/property.model.js');;
+const Propertie = require('../models/property.model.js');
 const httpStatus = require('../utils/HTTP.status.text.js');
 const appError = require('../utils/appError.js');
 const asyncWrapper = require('../middlewares/asyncFunctions.handler.js');
 const { MongoCryptAzureKMSRequestError, ReturnDocument } = require('mongodb');
+const fs = require('fs');
+const path = require('path');
 
 const getAllProperties = asyncWrapper(async (req,res,next)=>{
     const query = req.query;
@@ -44,8 +46,8 @@ const updateProperty = asyncWrapper(async (req,res,next)=>{
     const updates = req.body;
     const invalidUpdates = ['owner'];
     for(let element of invalidUpdates){
-        if(update[element]){
-            delete update[element];
+        if(updates[element]){
+            delete updates[element];
         }
     }
     const propId = req.params.propId;
@@ -67,6 +69,13 @@ const deleteProperty = asyncWrapper(async(req,res,next)=>{
         const error = appError.create('this property cannot be found',404,httpStatus.FAIL);
         return next(error);
     }
+    const imagesFolder = path.join(__dirname,'..','uploads','properties');
+    proptoDelete.images.forEach(image => {
+        fs.unlink(path.join(imagesFolder,image),(err)=>{
+            console.log(err);                
+        });
+        console.log('deleted successfuly');            
+    });
     res.status(200).json({status:httpStatus.SUCCESS,data:{message:'property deleted successfuly'}});
 })
 

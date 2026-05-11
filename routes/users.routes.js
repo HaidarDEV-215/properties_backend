@@ -5,7 +5,7 @@ const authorizeUserAction = require('../middlewares/authorizeCurrentUserAccountA
 const httpStatusText = require('../utils/HTTP.status.text.js');
 const router = express.Router();
 const appError = require('../utils/appError.js');
-const uploadUserImage = require('../middlewares/userImageUpload.js');//it uses multer
+const uploadUserImage = require('../helperFunctions/userImageUpload.js');//it uses multer
 
 router.route('/')
             .get(verifyToken,usersControler.getAllUsers)

@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken');
 const generateJWT = require('../utils/generateJWT.js');
 const userRoles = require('../utils/userRoles.js');
 const { isEmpty } = require('validator');
+const fs = require('fs');
+const path = require('path');
 
 const getAllUsers = asyncWrapper(async (req,res)=>{
     const query = req.query;
@@ -32,11 +34,17 @@ const getSingleUserInfo = asyncWrapper(async (req,res,next)=>{
 })
 
 const register = asyncWrapper( async (req,res,next)=>{
-    console.log("request :   ",req.body);
-    console.log("request file : ",req.file); // this attribute created by multer (upload) from routes file
+    //console.log("request :   ",req.body);
+    //console.log("request file : ",req.file); // this attribute created by multer (upload) from routes file
     const{firstName,lastName,email,avatar,password,role,bio,phone} = req.body;
     const oldUser = await User.findOne({email});
     if(oldUser){
+        if(req,file){
+            fs.unlink(req.file.path,(err)=>{
+                console.log(err);                
+            });
+            console.log('deleted successfuly');            
+        }
         const error = appError.create(`user with email ${req.body.email} is already exist`,400,httpStatus.FAIL);
         return next(error);
     } 
@@ -87,6 +95,13 @@ const login = asyncWrapper( async (req,res,next)=>{
 const deleteAccount =asyncWrapper(async (req,res,next)=>{
     const userId = req.params.userId;
     const usertoDelete = await User.findByIdAndDelete(userId);
+    if(usertoDelete.avatar){
+        const avatarPath = path.join(__dirname,'..','uploads','users',usertoDelete.avatar);
+        fs.unlink(avatarPath,(err)=>{
+            console.log(err);            
+        });
+        console.log('deleted successfuly');
+    }
     if(!usertoDelete){
             const error = appError.create('this user cannot be found',404,httpStatus.FAIL);
             return next(error);
