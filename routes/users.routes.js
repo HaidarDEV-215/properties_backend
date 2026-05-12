@@ -8,23 +8,37 @@ const appError = require('../utils/appError.js');
 const uploadUserImage = require('../helperFunctions/userImageUpload.js');//it uses multer
 
 router.route('/')
-            .get(verifyToken,usersControler.getAllUsers)
+            .get(
+                verifyToken,
+                usersControler.getAllUsers)
 
 router.route('/register')
             .post(
                 uploadUserImage.single('avatar'),//it uses multer
-                usersControler.register
-            )
+                usersControler.register)
 
 router.route('/login')
-            .post(usersControler.login)
+            .post(
+                usersControler.login)
 
 router.route('/:userId')
-            .delete(verifyToken,authorizeUserAction,usersControler.deleteAccount)
-            .patch(verifyToken,authorizeUserAction,usersControler.updateAccountInfo)
-            .get(verifyToken,usersControler.getSingleUserInfo);
+            .delete(
+                verifyToken,
+                authorizeUserAction,
+                usersControler.deleteAccount)
+            .patch(
+                verifyToken,
+                authorizeUserAction,
+                usersControler.updateAccountInfo)
+            .get(
+                verifyToken,
+                usersControler.getSingleUserInfo);
 
-
+router.route('/updateAvatar/:userId')
+            .patch(verifyToken,
+                uploadUserImage.single('avatar'),
+                authorizeUserAction,
+                usersControler.updateUserAvatar);
 
 
 module.exports = router;

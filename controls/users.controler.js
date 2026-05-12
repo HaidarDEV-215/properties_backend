@@ -137,11 +137,31 @@ const updateAccountInfo = asyncWrapper(async (req,res,next)=>{
     res.status(200).json({status:httpStatus.SUCCESS,data:{newUser :updatedUser,message:"user updated successfuly"}});
 })
 
+const updateUserAvatar = asyncWrapper( async (req,res,next) =>{
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+    if(!user){
+        const error = appError.create("user not found",404,httpStatus.FAIL);
+        return next(error);
+    }
+    if(user.avatar !== 'defaultUserAvatar.png'){
+        const oldAvatarPath = path.join(__dirname,'..','uploads','users',user.avatar);
+        fs.unlink(oldAvatarPath,(err)=>{
+            console.error(err);            
+        })
+    }
+    //console.log("the file : ",req.file.filename)
+    user.avatar = req.file.filename;
+    await user.save();
+    res.status(200).json({status:httpStatus.SUCCESS,data:{message:'avatar uploaded successfuly'}});
+})
+
 module.exports = {
     getAllUsers,
     getSingleUserInfo,
     register,
     login,
     deleteAccount,
-    updateAccountInfo
+    updateAccountInfo,
+    updateUserAvatar
 }
