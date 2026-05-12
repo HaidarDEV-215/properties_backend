@@ -13,11 +13,14 @@ postman to test my api's
 
 To test my program, after download.
 Just type:
+
 >>npm install
-in your directory console to install dependencies and required packages, and make sure you are connected to the internet.
-After that, type:
+
+in your directory console to install dependencies and required packages, and make sure you are connected to the internet and create <<.env>> file to store sensitive data, like(mongoDB_url, port and jwt secret code )
+After that,in console, type:
+
 >>npm run dev
-Make sure to create <<.env>> file to store sensitive data, like(mongoDB_url, port and jwt secret code )
+
 then it should work successfully
 
 goodluck
