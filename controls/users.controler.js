@@ -34,12 +34,14 @@ const getSingleUserInfo = asyncWrapper(async (req,res,next)=>{
 })
 
 const register = asyncWrapper( async (req,res,next)=>{
+    console.log('register start');
+    
     //console.log("request :   ",req.body);
     //console.log("request file : ",req.file); // this attribute created by multer (upload) from routes file
     const{firstName,lastName,email,avatar,password,role,bio,phone} = req.body;
     const oldUser = await User.findOne({email});
     if(oldUser){
-        if(req,file){
+        if(req.file){
             fs.unlink(req.file.path,(err)=>{
                 console.log(err);                
             });
