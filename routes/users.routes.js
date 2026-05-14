@@ -6,6 +6,8 @@ const httpStatusText = require('../utils/HTTP.status.text.js');
 const router = express.Router();
 const appError = require('../utils/appError.js');
 const uploadUserImage = require('../helperFunctions/userImageUpload.js');//it uses multer
+const {userValidationHandler} = require('../middlewares/userValidationHandler.js');
+const {userValidationSchema} = require('../helperFunctions/userValidationSchema.js');
 
 router.route('/')
             .get(
@@ -15,6 +17,8 @@ router.route('/')
 router.route('/register')
             .post(
                 uploadUserImage.single('avatar'),//it uses multer
+                userValidationSchema(),
+                userValidationHandler,
                 usersControler.register)
 
 router.route('/login')
