@@ -49,6 +49,12 @@ const register = asyncWrapper( async (req,res,next)=>{
         const error = appError.create(`user with email ${req.body.email} is already exist`,400,httpStatus.FAIL);
         return next(error);
     } 
+    let avatarFileName;
+    if(!req.file.filename){
+        avatarFileName = 'defaultUserAvatar.png';
+    }else{
+        avatarFileName = req.file.filename;
+    }
     //password hashing
     const hashPassword = await bcrypt.hash(password,10);
     const newUser = new User({
