@@ -15,9 +15,6 @@ module.exports = async (req,res,next)=>{
             console.log('deleted successfuly');            
         });
     })
-        
-        await Propertie.deleteMany({owner:req.currentUser.id});
-        return true;
-
-        
-    }
+    await Propertie.deleteMany({owner:req.currentUser.id});
+    return true;
+}
