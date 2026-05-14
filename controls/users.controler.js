@@ -1,6 +1,6 @@
 const asyncWrapper= require('../middlewares/asyncFunctions.handler.js');
 const httpStatus = require('../utils/HTTP.status.text.js');
-const deleteRelatedProperties = require('../helperFunctions/deleteRelatedAccount.js');
+const deleteRelatedProperties = require('../helperFunctions/deleteRelatedProperies.js');
 const appError = require('../utils/appError.js');
 const User = require('../models/users.model.js');
 const bcrypt = require('bcryptjs')
