@@ -140,12 +140,15 @@ const getMyProperties = asyncWrapper(async(req,res,next)=>{
 const changePropertyStatus = asyncWrapper(async (req,res,next)=>{
     const propertyId = req.params.propId;
     const newStatus = req.params.newStatus;
+    const availableStatus = ['available','sold','rented'];
     const property = await Propertie.findById(propertyId);
     if(!property){
         const error = appError.create('no properties found',404,httpStatus.FAIL);
         return next(error);
     }
-    property.status = newStatus;
+    if(availableStatus.findIndex(newStatus)){
+        property.status = newStatus;
+    }
     await property.save();
     res.status(200).json({status:httpStatus.SUCCESS,data:{property}});
 })
