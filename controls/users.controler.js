@@ -50,7 +50,7 @@ const register = asyncWrapper( async (req,res,next)=>{
         return next(error);
     } 
     let avatarFileName;
-    if(!req.file.filename){
+    if(!req.file){
         avatarFileName = 'defaultUserAvatar.png';
     }else{
         avatarFileName = req.file.filename;
@@ -62,7 +62,7 @@ const register = asyncWrapper( async (req,res,next)=>{
         lastName,
         email,
         password:hashPassword,
-        avatar: req.file.filename,
+        avatar: avatarFileName,
         bio,
         phone
     })
