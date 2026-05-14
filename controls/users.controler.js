@@ -1,5 +1,6 @@
 const asyncWrapper= require('../middlewares/asyncFunctions.handler.js');
 const httpStatus = require('../utils/HTTP.status.text.js');
+const deleteRelatedProperties = require('../helperFunctions/deleteRelatedAccount.js');
 const appError = require('../utils/appError.js');
 const User = require('../models/users.model.js');
 const bcrypt = require('bcryptjs')
@@ -97,7 +98,7 @@ const login = asyncWrapper( async (req,res,next)=>{
 const deleteAccount =asyncWrapper(async (req,res,next)=>{
     const userId = req.params.userId;
     const usertoDelete = await User.findByIdAndDelete(userId);
-    if(usertoDelete.avatar){
+    if(usertoDelete&&usertoDelete.avatar){
         const avatarPath = path.join(__dirname,'..','uploads','users',usertoDelete.avatar);
         fs.unlink(avatarPath,(err)=>{
             console.log(err);            
@@ -105,9 +106,13 @@ const deleteAccount =asyncWrapper(async (req,res,next)=>{
         console.log('deleted successfuly');
     }
     if(!usertoDelete){
-            const error = appError.create('this user cannot be found',404,httpStatus.FAIL);
-            return next(error);
-        }
+        const error = appError.create('this user cannot be found',404,httpStatus.FAIL);
+        return next(error);
+    }
+    await deleteRelatedProperties(req,res,next);
+    //console.log(typeof(usertoDelete._id), usertoDelete._id);
+    //console.log(typeof());
+    
     res.status(200).json({status:httpStatus.SUCCESS,data:{message:'user deleted successfuly'}});
 })
 
