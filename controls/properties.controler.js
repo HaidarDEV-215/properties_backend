@@ -146,9 +146,12 @@ const changePropertyStatus = asyncWrapper(async (req,res,next)=>{
         const error = appError.create('no properties found',404,httpStatus.FAIL);
         return next(error);
     }
-    if(availableStatus.findIndex(newStatus)){
-        property.status = newStatus;
+    console.log('new status : ',newStatus);
+    if(!availableStatus.includes(newStatus)){
+        const error = appError.create('error value of new status in unavailable [sold,rented,available]',400,httpStatus.FAIL);
+        return next(error);
     }
+    property.status = newStatus;
     await property.save();
     res.status(200).json({status:httpStatus.SUCCESS,data:{property}});
 })
