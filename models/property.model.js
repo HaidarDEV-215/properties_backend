@@ -44,6 +44,10 @@ const propertySchema = mongoose.Schema({
         enum:['available','sold','rented'],
         default:'available'
     },
+    coordinates:{
+        lat:Number,    //latitude
+        lng:Number    //longtude
+    },
     views:{
         type:Number,
         default:0

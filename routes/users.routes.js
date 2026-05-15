@@ -25,6 +25,12 @@ router.route('/login')
             .post(
                 usersControler.login)
 
+router.route('/myProfile')
+            .get(
+                verifyToken,
+                usersControler.getMyProfile
+            )
+
 router.route('/:userId')
             .delete(
                 verifyToken,

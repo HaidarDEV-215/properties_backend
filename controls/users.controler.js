@@ -167,6 +167,16 @@ const updateUserAvatar = asyncWrapper( async (req,res,next) =>{
     res.status(200).json({status:httpStatus.SUCCESS,data:{message:'avatar uploaded successfuly'}});
 })
 
+const getMyProfile = asyncWrapper(async (req,res,next)=>{
+    const currentUser = req.currentUser;
+    const profile = await User.findById(currentUser.id,{'password':false,'__v':false});
+    if(!profile){
+        const error = appError.create("user not found",404,httpStatus.FAIL);
+        return next(error);
+    }
+    res.status(200).json({status:httpStatus.SUCCESS,data:{profile}});
+})
+
 module.exports = {
     getAllUsers,
     getSingleUserInfo,
@@ -174,5 +184,6 @@ module.exports = {
     login,
     deleteAccount,
     updateAccountInfo,
-    updateUserAvatar
+    updateUserAvatar,
+    getMyProfile
 }
