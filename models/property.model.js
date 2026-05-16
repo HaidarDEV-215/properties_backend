@@ -59,7 +59,7 @@ const propertySchema = mongoose.Schema({
     owner:{//forign key
         type:mongoose.Schema.ObjectId,
         ref:'User',
-        require:true
+        required:true
     },
     createdAt:{
         type:Date,
