@@ -6,7 +6,10 @@ module.exports = (userEmail,code)=>{
         auth:{
             user:process.env.APP_EMAIL,
             pass:process.env.APP_PASSWORD 
-        }
+        },
+        host:'smtp.gmail.com', // to work with render and all cloud services
+        port:587,
+        secure:false
     });
 
     const mailOptions = {
