@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 
 module.exports = (userEmail,code)=>{
     const transporter = nodemailer.createTransport({
-        service:'gmail',
+        //service:'gmail',
         auth:{
             user:process.env.APP_EMAIL,
             pass:process.env.APP_PASSWORD 
@@ -11,6 +11,7 @@ module.exports = (userEmail,code)=>{
         port:587,
         secure:false
     });
+    
 
     const mailOptions = {
         from:process.env.APP_EMAIL,
