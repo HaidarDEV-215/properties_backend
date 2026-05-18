@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
     },
     avatar:{
         type:String ,
-        default:'upload/defaultUserAvatar.png'
+        default:'uploads/defaultUserAvatar.png'
     },
     bio:{
         type:String,

@@ -38,11 +38,9 @@ const propertyValiationSchema = ()=>{
             .notEmpty()
             .withMessage('city cannot be empty and must be string'),
         body('status')
-            .isString()
-            .notEmpty()
-            .withMessage('status cannot be empty and must be string')
+            .default('available')
             .isIn(['available','sold','rented'])
-            .withMessage("category invalid try [available,sold,rented]"),
+            .withMessage("status invalid try [available,sold,rented]"),
     ])
 }
 

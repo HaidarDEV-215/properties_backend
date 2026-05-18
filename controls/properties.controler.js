@@ -34,7 +34,7 @@ const addProperty = asyncWrapper(async (req,res,next)=>{
     const newProperty = new Propertie(req.body);
     for(let element of req.files){
         //console.log(element.filename);
-        newProperty.images.push(element.filename)
+        newProperty.images.push(`uploads/properties/${element.filename}`);
     }
     //console.log("new property :  ",newProperty);
     newProperty.owner = req.currentUser.id;
@@ -69,7 +69,7 @@ const deleteProperty = asyncWrapper(async(req,res,next)=>{
         const error = appError.create('this property cannot be found',404,httpStatus.FAIL);
         return next(error);
     }
-    const imagesFolder = path.join(__dirname,'..','uploads','properties');
+    const imagesFolder = path.join(__dirname,'..');
     proptoDelete.images.forEach(image => {
         fs.unlink(path.join(imagesFolder,image),(err)=>{
             console.log(err);                

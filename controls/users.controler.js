@@ -51,9 +51,9 @@ const register = asyncWrapper( async (req,res,next)=>{
     } 
     let avatarFileName;
     if(!req.file){
-        avatarFileName = 'defaultUserAvatar.png';
+        avatarFileName = 'uploads/defaultUserAvatar.png';
     }else{
-        avatarFileName = req.file.filename;
+        avatarFileName = `uploads/users/${req.file.filename}`;
     }
     //password hashing
     const hashPassword = await bcrypt.hash(password,10);
@@ -102,8 +102,8 @@ const login = asyncWrapper( async (req,res,next)=>{
 const deleteAccount =asyncWrapper(async (req,res,next)=>{
     const userId = req.params.userId;
     const usertoDelete = await User.findByIdAndDelete(userId);
-    if(usertoDelete&&usertoDelete.avatar){
-        const avatarPath = path.join(__dirname,'..','uploads','users',usertoDelete.avatar);
+    if(usertoDelete&&usertoDelete.avatar!='uploads/defaultUserAvatar.png'){
+        const avatarPath = path.join(__dirname,'..',usertoDelete.avatar);
         fs.unlink(avatarPath,(err)=>{
             console.log(err);            
         });
@@ -155,14 +155,14 @@ const updateUserAvatar = asyncWrapper( async (req,res,next) =>{
         const error = appError.create("user not found",404,httpStatus.FAIL);
         return next(error);
     }
-    if(user.avatar !== 'defaultUserAvatar.png'){
-        const oldAvatarPath = path.join(__dirname,'..','uploads','users',user.avatar);
+    if(user.avatar !== 'uploads/defaultUserAvatar.png'){
+        const oldAvatarPath = path.join(__dirname,'..',user.avatar);
         fs.unlink(oldAvatarPath,(err)=>{
             console.error(err);            
         })
     }
     //console.log("the file : ",req.file.filename)
-    user.avatar = req.file.filename;
+    user.avatar = `uploads/users/${req.file.filename}`;
     await user.save();
     res.status(200).json({status:httpStatus.SUCCESS,data:{message:'avatar uploaded successfuly'}});
 })
