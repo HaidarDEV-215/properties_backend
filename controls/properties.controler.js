@@ -44,7 +44,7 @@ const addProperty = asyncWrapper(async (req,res,next)=>{
 
 const updateProperty = asyncWrapper(async (req,res,next)=>{
     const updates = req.body;
-    const invalidUpdates = ['owner'];
+    const invalidUpdates = ['owner','likes','views','createdAt','images'];
     for(let element of invalidUpdates){
         if(updates[element]){
             delete updates[element];
