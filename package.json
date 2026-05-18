@@ -4,6 +4,7 @@
   "description": "Backend API for a real estate listing application includes user management, roles and property types\"",
   "main": "index.js",
   "scripts": {
+    "start":"index.js",
     "dev": "nodemon index.js"
   },
   "author": "Haidar Shawish",
