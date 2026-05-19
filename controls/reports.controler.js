@@ -71,10 +71,24 @@ const deleteReport = asyncWrapper(async (req,res,next)=>{
     res.status(200).json({status:httpStatus.SUCCESS,data:{message:'report deleted successfuly'}});
 });
 
+const lastMonthReports = asyncWrapper(async (req,res,next)=>{
+    const mostRepeated = await Report.find({date:{$gte:new Date(new Date().setMonth(new Date().getMonth()-1))}});
+    res.status(200).json({status:httpStatus.SUCCESS,data:{mostRepeated}});
+});
+
+const lastWeekReports = asyncWrapper(async (req,res,next)=>{
+    const mostRepeated = await Report.find({date:{$gte:new Date(new Date().setHours(new Date().getHours()-168))}});
+    res.status(200).json({status:httpStatus.SUCCESS,data:{mostRepeated}});
+})
+
+
+
 module.exports = {
     createReport,
     getAllReports,
     getOneReport,
     updateReportTitle,
-    deleteReport
+    deleteReport,
+    lastMonthReports,
+    lastWeekReports
 }
