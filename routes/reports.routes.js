@@ -16,6 +16,17 @@ router.route('/')
                 verifyToken,
                 reportsControls.createReport)
 
+router.route('/lastMonthReports')
+            .get(verifyToken,
+                allowedTo(userRoles.ADMIN),
+                reportsControls.lastMonthReports)
+
+router.route('/lastWeekReports')
+            .get(verifyToken,
+                allowedTo(userRoles.ADMIN),
+                reportsControls.lastWeekReports)
+
+                
 router.route('/:reportId')
             .get(
                 verifyToken,
@@ -29,5 +40,6 @@ router.route('/:reportId')
                 verifyToken,
                 validateReportDisplay,
                 reportsControls.deleteReport)
+
 
 module.exports = router;
