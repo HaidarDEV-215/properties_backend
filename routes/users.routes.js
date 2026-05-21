@@ -31,6 +31,12 @@ router.route('/myProfile')
                 usersControler.getMyProfile
             )
 
+router.route('/logout')
+            .get(
+                verifyToken,
+                usersControler.logOut
+            )
+
 router.route('/:userId')
             .delete(
                 verifyToken,

@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
 const appError = require('../utils/appError.js');
 const httpStatus = require('../utils/HTTP.status.text.js');
-const verifyToken = (req,res,next)=>{
+const TokenBlackList = require('../models/tokensBlackList.js');
+
+const verifyToken = async (req,res,next)=>{
     const auth = req.headers['Authorization']||req.headers['authorization'];
     if(!auth){
         const error = appError.create('token is required',401,httpStatus.ERROR);
@@ -11,6 +13,10 @@ const verifyToken = (req,res,next)=>{
     //split(' ')[1] will take the scound part of Authorization request header that is the token
     const token = auth.split(' ')[1];
     try{
+        const blockedToken = await TokenBlackList.findOne({token});
+        if(blockedToken){
+            throw new Error('this token is bloked');
+        }
         const currentUser = jwt.verify(token,process.env.JWT_SECRET_KEY);
         req.currentUser = currentUser;//request manipulation 'تلاعب بالطلب و اضافة خصائص
         next();

@@ -5,6 +5,7 @@ const appError = require('../utils/appError.js');
 const User = require('../models/users.model.js');
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
+const addToBlackList = require('../helperFunctions/addToBlackList.js');
 const generateJWT = require('../utils/generateJWT.js');
 const userRoles = require('../utils/userRoles.js');
 const { isEmpty } = require('validator');
@@ -177,6 +178,12 @@ const getMyProfile = asyncWrapper(async (req,res,next)=>{
     res.status(200).json({status:httpStatus.SUCCESS,data:{profile}});
 })
 
+const logOut = asyncWrapper(async (req,res,next)=>{
+    
+    await addToBlackList(req,res,next);
+    res.status(200).json({status : httpStatus.SUCCESS,data:{message:'loged out successfuly'}});
+})
+
 module.exports = {
     getAllUsers,
     getSingleUserInfo,
@@ -185,5 +192,6 @@ module.exports = {
     deleteAccount,
     updateAccountInfo,
     updateUserAvatar,
-    getMyProfile
+    getMyProfile,
+    logOut
 }
