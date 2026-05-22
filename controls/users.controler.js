@@ -184,10 +184,6 @@ const logOut = asyncWrapper(async (req,res,next)=>{
     res.status(200).json({status : httpStatus.SUCCESS,data:{message:'loged out successfuly'}});
 })
 
-const getMyLikes = asyncWrapper(async (req,res,next)=>{
-    
-})
-
 module.exports = {
     getAllUsers,
     getSingleUserInfo,

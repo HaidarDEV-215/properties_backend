@@ -3,6 +3,7 @@ const httpStatus = require('../utils/HTTP.status.text.js');
 const appError = require('../utils/appError.js');
 const asyncWrapper = require('../middlewares/asyncFunctions.handler.js');
 const propertyLikeAction = require('../helperFunctions/propertyLikeAction.js');
+const getLikesActors = require('../helperFunctions/getLikesActors.js');
 const { MongoCryptAzureKMSRequestError, ReturnDocument } = require('mongodb');
 const fs = require('fs');
 const path = require('path');
@@ -181,6 +182,18 @@ const unlikeProperty = asyncWrapper(async (req,res,next)=>{
     res.status(200).json({status:httpStatus.SUCCESS,data:{property}});
 });
 
+
+const getMyLikes = asyncWrapper(async (req,res,next)=>{
+    const currentUserId = req.currentUser.id;
+    const properties = await getLikesActors.getLikedProperties(currentUserId);
+    if(!properties){
+        const error = appError.create('no result found',404,httpStatus.FAIL);
+        return next(error);
+    };
+    res.status(200).json({status:httpStatus.SUCCESS,data:{properties}});
+})
+
+
 module.exports = {
     getAllProperties,
     getMyProperties,
@@ -191,5 +204,6 @@ module.exports = {
     addProperty,
     changePropertyStatus,
     addLike,
-    unlikeProperty
+    unlikeProperty,
+    getMyLikes
 }

@@ -20,6 +20,11 @@ router.route('/')
                     propertyValidationHandler,
                     propertiesControls.addProperty)
 
+router.route('/my-liked')
+                .get(
+                    verifyToken,
+                    propertiesControls.getMyLikes)
+
 router.route('/like/:propertyId')
                 .post(
                     verifyToken,
