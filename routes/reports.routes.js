@@ -16,16 +16,10 @@ router.route('/')
                 verifyToken,
                 reportsControls.createReport)
 
-router.route('/lastMonthReports')
+router.route('/getQueriedReports')
             .get(verifyToken,
                 allowedTo(userRoles.ADMIN),
-                reportsControls.lastMonthReports)
-
-router.route('/lastWeekReports')
-            .get(verifyToken,
-                allowedTo(userRoles.ADMIN),
-                reportsControls.lastWeekReports)
-
+                reportsControls.getQueriedReports)
                 
 router.route('/:reportId')
             .get(

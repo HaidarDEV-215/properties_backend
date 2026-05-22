@@ -77,13 +77,13 @@ const deleteProperty = asyncWrapper(async(req,res,next)=>{
         console.log('deleted successfuly');            
     });
     res.status(200).json({status:httpStatus.SUCCESS,data:{message:'property deleted successfuly'}});
-})
+});
 
 const propertiesSearch = asyncWrapper(async (req,res,next)=>{
     const {title,category,area,city,price,purpose} = req.body||{};
     const query = req.query;//pagenation query
     const limit = query.limit||10;
-    const page = limit.page||1;
+    const page = query.page||1;
     const skip = (page-1)*limit;
 
     const filtersQuery = {};//dinamic query
@@ -135,7 +135,7 @@ const getMyProperties = asyncWrapper(async(req,res,next)=>{
         return next(error);
     }
     res.status(200).json({status:httpStatus.SUCCESS,data:{properties}});
-})
+});
 
 const changePropertyStatus = asyncWrapper(async (req,res,next)=>{
     const propertyId = req.params.propId;
@@ -154,7 +154,9 @@ const changePropertyStatus = asyncWrapper(async (req,res,next)=>{
     property.status = newStatus;
     await property.save();
     res.status(200).json({status:httpStatus.SUCCESS,data:{property}});
-})
+});
+
+
 
 module.exports = {
     getAllProperties,
@@ -164,5 +166,5 @@ module.exports = {
     deleteProperty,
     propertiesSearch,
     addProperty,
-    changePropertyStatus
+    changePropertyStatus,
 }
