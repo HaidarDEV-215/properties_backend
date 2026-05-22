@@ -7,9 +7,9 @@ module.exports = async(req,res,next,property,choice)=>{
     const propertyId = property._id;
     if(choice == 'like'){
         //console.log('give like');        
-        const oldLike = await Like.find({user:user,property:propertyId});
+        const oldLike = await Like.findOne({user:user,property:propertyId});
         //console.log('old',oldLike);        
-        if(oldLike.length === 0){
+        if(!oldLike){
             console.log('add to mode like');
             
             const newLike = new Like({
@@ -22,9 +22,9 @@ module.exports = async(req,res,next,property,choice)=>{
         }
     }
     else{
-        const oldLike = await Like.find({user:user,property:propertyId});
+        const oldLike = await Like.findOne({user:user,property:propertyId});
         //console.log(oldLike);
-        if(oldLike.length > 0){
+        if(oldLike){
             await Like.deleteOne({user:user,property:propertyId});
             property.likes -=1;
         }
