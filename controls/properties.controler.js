@@ -4,6 +4,7 @@ const appError = require('../utils/appError.js');
 const asyncWrapper = require('../middlewares/asyncFunctions.handler.js');
 const propertyLikeAction = require('../helperFunctions/propertyLikeAction.js');
 const getLikesActors = require('../helperFunctions/getLikesActors.js');
+const checkAndEncreaseViews = require('../helperFunctions/checkAndEncreaseViews.js');
 const { MongoCryptAzureKMSRequestError, ReturnDocument } = require('mongodb');
 const fs = require('fs');
 const path = require('path');
@@ -27,6 +28,10 @@ const getSingleProperty = asyncWrapper(async (req,res,next)=>{
     if(!property){
         const error = appError.create("no result found",404,httpStatus.FAIL);
         return next(error);
+    }
+    if(await checkAndEncreaseViews(req,res,next)){
+        property.views +=1;
+        property.save();
     }
     res.status(200).json({status:httpStatus.SUCCESS,data:{property}});
 });
