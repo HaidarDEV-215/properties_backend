@@ -4,6 +4,7 @@ const httpStatus = require('../utils/HTTP.status.text.js');
 const appError = require('../utils/appError.js');
 const asyncWrapper = require('../middlewares/asyncFunctions.handler.js');
 const { options } = require('../routes/password.routes.js');
+const { $where } = require('../models/users.model.js');
 
 const createReport = asyncWrapper(async (req,res,next)=>{
     const propertyId = req.body.property;
@@ -79,16 +80,23 @@ const getQueriedReports = asyncWrapper(async (req,res,next)=>{
     const skip = (page-1)*limit;
     const {startDate,endDate,userId,title,propertyId} = query;
     const filtersQuery = {};
-    if(startDate||endDate){
+    
+    if(startDate&&endDate){
+        filtersQuery.date={};
+        filtersQuery.date={
+            $gte: startDate,
+            $lte: endDate
+        }
+    }else if(startDate||endDate){
         filtersQuery.date={};
         if(startDate){
             filtersQuery.date={
-                $gte: new Date(startDate)
+                $gte: startDate
             }
         }
         if(endDate){
             filtersQuery.date={
-                $lte: new Date(endDate)
+                $lte: endDate
             }
         }
     }
