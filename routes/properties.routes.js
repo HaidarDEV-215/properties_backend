@@ -20,6 +20,14 @@ router.route('/')
                     propertyValidationHandler,
                     propertiesControls.addProperty)
 
+router.route('/like/:propertyId')
+                .post(
+                    verifyToken,
+                    propertiesControls.addLike)
+                .delete(
+                    verifyToken,
+                    propertiesControls.unlikeProperty)
+
 router.route('/:propId')
                 .get(
                     verifyToken,

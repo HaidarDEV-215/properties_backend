@@ -2,6 +2,7 @@ const Propertie = require('../models/property.model.js');
 const httpStatus = require('../utils/HTTP.status.text.js');
 const appError = require('../utils/appError.js');
 const asyncWrapper = require('../middlewares/asyncFunctions.handler.js');
+const propertyLikeAction = require('../helperFunctions/propertyLikeAction.js');
 const { MongoCryptAzureKMSRequestError, ReturnDocument } = require('mongodb');
 const fs = require('fs');
 const path = require('path');
@@ -156,7 +157,29 @@ const changePropertyStatus = asyncWrapper(async (req,res,next)=>{
     res.status(200).json({status:httpStatus.SUCCESS,data:{property}});
 });
 
+const addLike = asyncWrapper(async (req,res,next)=>{
+    const propertyId = req.params.propertyId;
+    let property = await Propertie.findById(propertyId);
+    if(!property){
+        const error = appError.create('no properties found',404,httpStatus.FAIL);
+        return next(error);
+    }
+    property = await propertyLikeAction(req,res,next,property,'like');
+    await property.save();
+    res.status(200).json({status:httpStatus.SUCCESS,data:{property}});
+});
 
+const unlikeProperty = asyncWrapper(async (req,res,next)=>{
+    const propertyId = req.params.propertyId;
+    let property = await Propertie.findById(propertyId);
+    if(!property){
+        const error = appError.create('no properties found',404,httpStatus.FAIL);
+        return next(error);
+    }
+    property = await propertyLikeAction(req,res,next,property,'unlike');
+    await property.save();
+    res.status(200).json({status:httpStatus.SUCCESS,data:{property}});
+});
 
 module.exports = {
     getAllProperties,
@@ -167,4 +190,6 @@ module.exports = {
     propertiesSearch,
     addProperty,
     changePropertyStatus,
+    addLike,
+    unlikeProperty
 }
