@@ -8,7 +8,7 @@ const userValidationHandler = (req,res,next)=>{
     if(!errors.isEmpty()){
         if(req.file){
             fs.unlink(req.file.path,(err)=>{
-                const error = appError.create(`error while deleting user image ${err.message}`,500,httpStatusText.FAIL);
+                const error = appError.create(`error while deleting user image`,500,httpStatusText.FAIL);
                 return next(error);
             })
         }

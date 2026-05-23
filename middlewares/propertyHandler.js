@@ -10,7 +10,7 @@ const propertyValidationHandler = (req,res,next)=>{
             req.files.forEach(file => {
                 //fs.unlink(`uploads/properties${file.filename}`,(err)=>{
                 fs.unlink(file.path,(err)=>{
-                    const error = appError.create(`error while deleting property images ${err.message}`,500,httpStatus.FAIL);
+                    const error = appError.create(`error while deleting property images`,500,httpStatusText.FAIL);
                     return next(error);  
                 })
                 //console.log("file deleted")

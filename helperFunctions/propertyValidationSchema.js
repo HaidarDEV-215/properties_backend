@@ -41,6 +41,17 @@ const propertyValiationSchema = ()=>{
             .default('available')
             .isIn(['available','sold','rented'])
             .withMessage("status invalid try [available,sold,rented]"),
+        body('address')
+            .notEmpty()
+            .withMessage('address cannot be empty'),
+        body('lat')
+            .optional()
+            .isFloat({min:-90,max:90})
+            .withMessage('latitude must be between -90 and 90'),
+        body('lng')
+            .optional()
+            .isFloat({min:-180,max:180})
+            .withMessage('longitude must be between -180 and 180')
     ])
 }
 

@@ -90,7 +90,7 @@ const deleteProperty = asyncWrapper(async(req,res,next)=>{
     const imagesFolder = path.join(__dirname,'..');
     proptoDelete.images.forEach(image => {
         fs.unlink(path.join(imagesFolder,image),(err)=>{
-            const error = appError.create(`error while deleting property images ${err.message}`,500,httpStatus.FAIL);
+            const error = appError.create(`error while deleting property images`,500,httpStatus.FAIL);
             return next(error);                 
         });
     });
