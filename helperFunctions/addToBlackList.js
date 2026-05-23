@@ -6,7 +6,7 @@ module.exports = async (req,res,next)=>{
     const tokenObject = new TokenBlackList({
         token :userToken,
         email:req.currentUser.email,
-        addedAt:Date.now().toFixed(),
+        addedAt:Date.now(),
         expiresAt:Date.now() + 90 * 24 * 60 * 60 * 1000
     }); 
     await tokenObject.save();
