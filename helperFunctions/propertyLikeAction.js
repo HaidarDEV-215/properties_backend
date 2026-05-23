@@ -9,9 +9,7 @@ module.exports = async(req,res,next,property,choice)=>{
         //console.log('give like');        
         const oldLike = await Like.findOne({user:user,property:propertyId});
         //console.log('old',oldLike);        
-        if(!oldLike){
-            console.log('add to mode like');
-            
+        if(!oldLike){            
             const newLike = new Like({
                 user:user,
                 property:propertyId,

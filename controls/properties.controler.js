@@ -39,7 +39,7 @@ const getSingleProperty = asyncWrapper(async (req,res,next)=>{
 const addProperty = asyncWrapper(async (req,res,next)=>{
     //console.log("req.body.images",req.files);
     const {lat, lng, title, description, purpose, category, area, price, city, address} = req.body;
-    const newProperty = {title, description, purpose, category, area, price, city, adress, images:[]};
+    const newProperty = {title, description, purpose, category, area, price, city, address, images:[]};
     if(lat && lng){
         newProperty.location = {
             type:'Point',
@@ -90,7 +90,8 @@ const deleteProperty = asyncWrapper(async(req,res,next)=>{
     const imagesFolder = path.join(__dirname,'..');
     proptoDelete.images.forEach(image => {
         fs.unlink(path.join(imagesFolder,image),(err)=>{
-            console.log(err);                
+            const error = appError.create(`error while deleting property images ${err.message}`,500,httpStatus.FAIL);
+            return next(error);                 
         });
     });
     res.status(200).json({status:httpStatus.SUCCESS,data:{message:'property deleted successfuly'}});

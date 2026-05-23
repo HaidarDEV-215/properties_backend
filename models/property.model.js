@@ -53,11 +53,11 @@ const propertySchema = mongoose.Schema({
         type:{
             type:String,
             enum:['Point'],
-            default:'Point'
+           // default:'Point'
         },
         coordinates:{
             type:[Number],
-            required: function (){return this.location !== undefined;}
+           // required: function (){return this.location !== undefined;}
         }
     },
     views:{

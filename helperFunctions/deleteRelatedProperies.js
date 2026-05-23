@@ -10,7 +10,8 @@ module.exports = async (req,res,next)=>{
         const imagesFolder = path.join(__dirname,'..');
         propery.images.forEach(image => {
             fs.unlink(path.join(imagesFolder,image),(err)=>{
-                console.log(err);                
+                const error = appError.create(`error while deleting property images ${err.message}`,500,httpStatus.FAIL);
+                return next(error);                
             });
             console.log('deleted successfuly');            
         });

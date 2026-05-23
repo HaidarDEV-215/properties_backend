@@ -5,7 +5,7 @@ const appError = require('../utils/appError.js');
 //const upload = multer({dest:'uploads/'});
 const diskStorage = multer.diskStorage({
     destination: function(req,file,cb){
-        console.log('FILE : ',file );
+        //console.log('FILE : ',file );
         cb(null,'uploads/users') //callback <=> cb(error,destination folder)
     },
     filename:function(req,file,cb){
