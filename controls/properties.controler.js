@@ -39,9 +39,12 @@ const getSingleProperty = asyncWrapper(async (req,res,next)=>{
 const addProperty = asyncWrapper(async (req,res,next)=>{
     //console.log("req.body.images",req.files);
     const newProperty = new Propertie(req.body);
-    for(let element of req.files){
+    if(req.files)
+    {
+        for(let element of req.files){
         //console.log(element.filename);
         newProperty.images.push(`uploads/properties/${element.filename}`);
+        }
     }
     //console.log("new property :  ",newProperty);
     newProperty.owner = req.currentUser.id;
@@ -81,7 +84,6 @@ const deleteProperty = asyncWrapper(async(req,res,next)=>{
         fs.unlink(path.join(imagesFolder,image),(err)=>{
             console.log(err);                
         });
-        console.log('deleted successfuly');            
     });
     res.status(200).json({status:httpStatus.SUCCESS,data:{message:'property deleted successfuly'}});
 });

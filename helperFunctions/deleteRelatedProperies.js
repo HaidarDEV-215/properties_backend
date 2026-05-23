@@ -7,7 +7,7 @@ const path = require('path');
 module.exports = async (req,res,next)=>{
     const propstoDelete = await Propertie.find({owner:req.currentUser.id});
     propstoDelete.forEach(propery =>{
-        const imagesFolder = path.join(__dirname,'..','uploads','properties');
+        const imagesFolder = path.join(__dirname,'..');
         propery.images.forEach(image => {
             fs.unlink(path.join(imagesFolder,image),(err)=>{
                 console.log(err);                
@@ -16,5 +16,5 @@ module.exports = async (req,res,next)=>{
         });
     })
     await Propertie.deleteMany({owner:req.currentUser.id});
-    return true;
+    next();
 }
