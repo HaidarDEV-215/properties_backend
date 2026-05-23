@@ -7,7 +7,7 @@ const getLikedProperties = async (userId)=>{
     return LikedProperties;
 }
 
-
+// TO DO get properties likers (populate Users)./ used with user controls.
 
 
 

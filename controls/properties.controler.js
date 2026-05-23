@@ -38,7 +38,14 @@ const getSingleProperty = asyncWrapper(async (req,res,next)=>{
 
 const addProperty = asyncWrapper(async (req,res,next)=>{
     //console.log("req.body.images",req.files);
-    const newProperty = new Propertie(req.body);
+    const {lat, lng, title, description, purpose, category, area, price, city, address} = req.body;
+    const newProperty = {title, description, purpose, category, area, price, city, adress, images:[]};
+    if(lat && lng){
+        newProperty.location = {
+            type:'Point',
+            coordinates:[parseFloat(lng),parseFloat(lat)]
+        };
+    };
     if(req.files)
     {
         for(let element of req.files){
@@ -48,8 +55,9 @@ const addProperty = asyncWrapper(async (req,res,next)=>{
     }
     //console.log("new property :  ",newProperty);
     newProperty.owner = req.currentUser.id;
-    await newProperty.save();
-    res.status(201).json({status:httpStatus.SUCCESS,data:{newProperty}});
+    const property = new Propertie(newProperty);
+    await property.save();
+    res.status(201).json({status:httpStatus.SUCCESS,data:{property}});
 });
 
 const updateProperty = asyncWrapper(async (req,res,next)=>{
@@ -89,7 +97,7 @@ const deleteProperty = asyncWrapper(async(req,res,next)=>{
 });
 
 const propertiesSearch = asyncWrapper(async (req,res,next)=>{
-    const {title,category,area,city,price,purpose} = req.body||{};
+    const {title,category,area,city,price,purpose,nearBy,lat,lng} = req.body||{};
     const query = req.query;//pagenation query
     const limit = query.limit||10;
     const page = query.page||1;
@@ -128,11 +136,20 @@ const propertiesSearch = asyncWrapper(async (req,res,next)=>{
             $lte:price + 1000000
         }
     };
+    if(nearBy===true||nearBy==='true'){
+        if(lat && lng){
+            filtersQuery.location={
+                $near:{
+                    $geometry:{
+                        type:"Point",
+                        coordinates:[parseFloat(lng),parseFloat(lat)]
+                    },
+                    $maxDistance:30000 // 30 km²
+                }
+            }
+        }
+    }
     const properties = await Propertie.find(filtersQuery,{"__v":false}).limit(limit).skip(skip);
-    if(!properties){
-        const error = appError.create('no result found',404,httpStatus.FAIL);
-        return next(error);
-    };
     res.status(200).json({status:httpStatus.SUCCESS,data:{properties}});
 });
 

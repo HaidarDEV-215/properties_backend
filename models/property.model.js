@@ -31,6 +31,11 @@ const propertySchema = mongoose.Schema({
         required:true,
         trim:true
     },
+    address:{
+        type:String,
+        required:true,
+        trim:true
+    },
     area:{
         type:Number,
         required:true
@@ -44,9 +49,16 @@ const propertySchema = mongoose.Schema({
         enum:['available','sold','rented'],
         default:'available'
     },
-    coordinates:{
-        lat:Number,    //latitude
-        lng:Number    //longtude
+    location:{// global markup method to store coordinates : geoJSON
+        type:{
+            type:String,
+            enum:['Point'],
+            default:'Point'
+        },
+        coordinates:{
+            type:[Number],
+            required: function (){return this.location !== undefined;}
+        }
     },
     views:{
         type:Number,
@@ -66,5 +78,7 @@ const propertySchema = mongoose.Schema({
         default:Date.now()
     }
 });
+
+propertySchema.index({location:'2dsphere'});
 
 module.exports = mongoose.model('Propertie',propertySchema);
