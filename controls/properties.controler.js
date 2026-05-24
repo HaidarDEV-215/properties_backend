@@ -15,11 +15,7 @@ const getAllProperties = asyncWrapper(async (req,res,next)=>{
     const page = query.page||1;
     const skip = (page-1)*limit;
     const properties = await Propertie.find({},{'__v':false}).limit(limit).skip(skip);
-    if(properties.length === 0){
-        const error = appError.create('no result found',404,httpStatus.FAIL);
-        return next(error);
-    }
-    res.status(200).json({status:httpStatus.SUCCESS,data:{properties}});
+    res.status(200).json({status:httpStatus.SUCCESS,results:properties.length,data:{properties}});
 });
 
 const getSingleProperty = asyncWrapper(async (req,res,next)=>{
@@ -98,7 +94,7 @@ const deleteProperty = asyncWrapper(async(req,res,next)=>{
 });
 
 const propertiesSearch = asyncWrapper(async (req,res,next)=>{
-    const {title,category,area,city,price,purpose,nearBy,lat,lng} = req.body||{};
+    const {title,category,area,city,price,maxPrice,minPrice,purpose,nearBy,lat,lng} = req.body||{};
     const query = req.query;//pagenation query
     const limit = query.limit||10;
     const page = query.page||1;
@@ -131,13 +127,17 @@ const propertiesSearch = asyncWrapper(async (req,res,next)=>{
             $lte: area + 10
         }
     };
-    if(price){
+    if(price||maxPrice||minPrice){
+    //filtering by price with max and min price if they exist in the request body or with a default range of 1 million if they don't exist.
+        const maxPriceFilter = maxPrice||price + 1000000;
+        const minPriceFilter = minPrice||price - 1000000;
         filtersQuery.price ={
-            $gte:price - 1000000,
-            $lte:price + 1000000
+            $gte:minPriceFilter,
+            $lte:maxPriceFilter
         }
     };
     if(nearBy===true||nearBy==='true'){
+    //filtering by location if the user want to search for nearby properties and if lat and lng exist in the request body.
         if(lat && lng){
             filtersQuery.location={
                 $near:{
@@ -151,17 +151,13 @@ const propertiesSearch = asyncWrapper(async (req,res,next)=>{
         }
     }
     const properties = await Propertie.find(filtersQuery,{"__v":false}).limit(limit).skip(skip);
-    res.status(200).json({status:httpStatus.SUCCESS,data:{properties}});
+    res.status(200).json({status:httpStatus.SUCCESS,results : properties.length,data:{properties}});
 });
 
 const getMyProperties = asyncWrapper(async(req,res,next)=>{
     const userId = req.currentUser.id;
     const properties = await Propertie.find({owner:userId},{"__v":false});
-    if(!properties){
-        const error = appError.create('no properties found',404,httpStatus.FAIL);
-        return next(error);
-    }
-    res.status(200).json({status:httpStatus.SUCCESS,data:{properties}});
+    res.status(200).json({status:httpStatus.SUCCESS,results : properties.length ,data:{properties}});
 });
 
 const changePropertyStatus = asyncWrapper(async (req,res,next)=>{
@@ -215,7 +211,7 @@ const getMyLikes = asyncWrapper(async (req,res,next)=>{
         const error = appError.create('no result found',404,httpStatus.FAIL);
         return next(error);
     };
-    res.status(200).json({status:httpStatus.SUCCESS,data:{properties}});
+    res.status(200).json({status:httpStatus.SUCCESS,results : properties.length ,data:{properties}});
 })
 
 

@@ -113,7 +113,7 @@ const getQueriedReports = asyncWrapper(async (req,res,next)=>{
         filtersQuery.propertyId=propertyId;
     }
     const filteredReports = await Report.find(filtersQuery,{'__v':false}).limit(limit).skip(skip).sort({date:-1});
-    res.status(200).json({status:httpStatus.SUCCESS,data:{filteredReports}});
+    res.status(200).json({status:httpStatus.SUCCESS,results : filteredReports.length ,data:{filteredReports}});
 });
 
 module.exports = {

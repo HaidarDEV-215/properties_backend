@@ -19,7 +19,7 @@ const getAllUsers = asyncWrapper(async (req,res)=>{
     const page = query.page || 1 ;
     const skip = (page-1)*limit;
     const users = await User.find({},{"__v":false,"password":false}).limit(limit).skip(skip);
-    return res.status(200).json(  {status : httpStatus.SUCCESS ,data:   {users:users}   }   );
+    return res.status(200).json(  {status : httpStatus.SUCCESS, results : users.length, data:   {users:users}   }   );
 
 })
 

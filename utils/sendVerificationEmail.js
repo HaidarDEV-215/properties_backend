@@ -54,7 +54,7 @@ module.exports = (userEmail,code)=>{
         if(error){
             console.error(error);        
         }else{
-            console.log("email sent : ",success.responce);        
+            console.log("email sent : ",success.response);        
         }
     });
 }
