@@ -1,5 +1,5 @@
 const multer = require('multer');
-const httpStatus = require('../utils/HTTP.status.text.js');
+const httpStatusText = require('../utils/HTTP.status.text.js');
 const appError = require('../utils/appError.js');
 
 //const upload = multer({dest:'uploads/'});
