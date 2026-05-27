@@ -34,8 +34,8 @@ const getSingleProperty = asyncWrapper(async (req,res,next)=>{
 
 const addProperty = asyncWrapper(async (req,res,next)=>{
     //console.log("req.body.images",req.files);
-    const {lat, lng, title, description, purpose, category, area, price, city, address} = req.body;
-    const newProperty = {title, description, purpose, category, area, price, city, address, images:[]};
+    const {lat, lng, title, description, purpose, category, area, price, city, address, bathRooms, bedRooms, phoneNumber} = req.body;
+    const newProperty = {title, description, purpose, category, area, price, city, address, bathRooms, bedRooms, phoneNumber, images:[]};
     if(lat && lng){
         newProperty.location = {
             type:'Point',
@@ -64,6 +64,7 @@ const updateProperty = asyncWrapper(async (req,res,next)=>{
             delete updates[element];
         }
     }
+    updates.updatedAt = Date.now();
     const propId = req.params.propId;
     const updatedProperty = await Propertie.findByIdAndUpdate(propId,updates,{
         returnDocument:'after',

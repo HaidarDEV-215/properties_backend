@@ -76,6 +76,27 @@ const propertySchema = mongoose.Schema({
     createdAt:{
         type:Date,
         default:Date.now()
+    },
+    updatedAt:{
+        type:Date,
+        default:Date.now()
+    },
+    bathRooms:{
+        type:Number,
+        default:0
+    },
+    bedRooms:{
+        type:Number,
+        default:0
+    },
+    phoneNumber:{
+        type:String,
+        validate:{
+            validator: function(v) {
+                return /^[\+]?[0-9]{10,13}$/.test(v);
+            },
+            message: 'Please enter a valid phone number'
+        }
     }
 });
 

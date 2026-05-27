@@ -51,7 +51,17 @@ const propertyValiationSchema = ()=>{
         body('lng')
             .optional()
             .isFloat({min:-180,max:180})
-            .withMessage('longitude must be between -180 and 180')
+            .withMessage('longitude must be between -180 and 180'),
+        body('bathRooms')
+            .optional()
+            .isNumeric()
+            .isInt({gt:0})
+            .withMessage('bathRooms must be a positive integer'),
+        body('bedRooms')
+            .optional()
+            .isNumeric()
+            .isInt({gt:0})
+            .withMessage('bedRooms must be a positive integer')
     ])
 }
 
