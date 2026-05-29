@@ -17,5 +17,5 @@ module.exports = async (req,res,next)=>{
         });
     })
     await Propertie.deleteMany({owner:req.currentUser.id});
-    next();
+    return true;
 }

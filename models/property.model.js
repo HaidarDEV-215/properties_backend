@@ -19,7 +19,7 @@ const propertySchema = mongoose.Schema({
     },
     category:{
         type:String,
-        enum:['apartment','house','land','office','shop','land'],
+        enum:['apartment','house','land','office','shop','villa'],
         required:true
     },
     price:{
