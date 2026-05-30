@@ -95,7 +95,7 @@ const deleteProperty = asyncWrapper(async(req,res,next)=>{
 });
 
 const propertiesSearch = asyncWrapper(async (req,res,next)=>{
-    const {title,category,area,city,price,maxPrice,minPrice,purpose,nearBy,lat,lng} = req.body||{};
+    const {title,category,area,city,price,maxPrice,minPrice,purpose,nearBy,lat,lng} = req.query||{};
     const query = req.query;//pagenation query
     const limit = query.limit||10;
     const page = query.page||1;
