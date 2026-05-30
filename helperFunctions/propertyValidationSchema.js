@@ -31,8 +31,8 @@ const propertyValiationSchema = ()=>{
             .isString()
             .notEmpty()
             .withMessage('category cannot be empty and must be string')
-            .isIn(['apartment','house','land','office','shop','land'])
-            .withMessage("category invalid try [apartment,house,land,office,shop,land]"),
+            .isIn(['apartment','house','land','office','shop','land','villa'])
+            .withMessage("category invalid try [apartment,house,land,office,shop,land,villa]"),
         body('city')
             .isString()
             .notEmpty()
@@ -55,12 +55,12 @@ const propertyValiationSchema = ()=>{
         body('bathRooms')
             .optional()
             .isNumeric()
-            .isInt({gt:0})
+            .isInt({gte:0})
             .withMessage('bathRooms must be a positive integer'),
         body('bedRooms')
             .optional()
             .isNumeric()
-            .isInt({gt:0})
+            .isInt({gte:0})
             .withMessage('bedRooms must be a positive integer')
     ])
 }
