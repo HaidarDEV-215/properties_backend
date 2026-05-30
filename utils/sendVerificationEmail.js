@@ -1,4 +1,6 @@
 const nodemailer = require('nodemailer');
+const appError = require('./appError.js');
+const httpStatus = require('./HTTP.status.text.js');
 
 module.exports = (userEmail,code)=>{
     const transporter = nodemailer.createTransport({
@@ -52,9 +54,12 @@ module.exports = (userEmail,code)=>{
 
     transporter.sendMail(mailOptions,(error,success)=>{
         if(error){
-            console.error(error);        
+            const err = appError.create(`error while sending email ${error.message}`,500,httpStatus.FAIL);
+            return err; 
+           // console.error(error);        
         }else{
-            console.log("email sent : ",success.response);        
+            return true;
+           // console.log("email sent : ",success.response);        
         }
     });
 }

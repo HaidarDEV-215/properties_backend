@@ -20,7 +20,7 @@ const getAllProperties = asyncWrapper(async (req,res,next)=>{
 
 const getSingleProperty = asyncWrapper(async (req,res,next)=>{
     const propId = req.params.propId;
-    const property = await Propertie.findById(propId);
+    const property = await Propertie.findById(propId).populate('owner','_id firstName lastName email phone avatar');
     if(!property){
         const error = appError.create("no result found",404,httpStatus.FAIL);
         return next(error);

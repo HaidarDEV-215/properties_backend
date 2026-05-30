@@ -33,7 +33,7 @@ const resetPasswordRequest = asyncWrapper(async (req,res,next)=>{
 
     await OTP.save();
     
-    sendVerificationEmail(email,verificationCode);
+    await sendVerificationEmail(email,verificationCode);
     
     res.status(200).json({status:httpStatus.SUCCESS,data:{message:`verification code is sent to ${existUser.email}`}});
 })

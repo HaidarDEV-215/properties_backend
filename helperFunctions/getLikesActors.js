@@ -3,7 +3,7 @@ const appError = require('../utils/appError.js');
 const Like = require('../models/likes.model.js');
 
 const getLikedProperties = async (userId)=>{
-    const LikedProperties = await Like.find({user:userId}).populate('property');//populate is used with Refrenced fileds like Peoperty and User by Object_id
+    const LikedProperties = await Like.find({user:userId}).populate('property','_id title description price images owner');//populate is used with Refrenced fileds like Peoperty and User by Object_id
     return LikedProperties;
 }
 
