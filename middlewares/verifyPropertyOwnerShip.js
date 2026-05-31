@@ -13,10 +13,7 @@ const verifyOwnership = async (req,res,next)=>{
         const error = appError.create("no properties found",404,httpStatus.FAIL);
         return next(error);
     }
-    if(currentUser.role === userRoles.ADMIN){
-        next();
-    }
-    if(property.owner.toString() !== req.currentUser.id){
+    if(property.owner.toString() !== req.currentUser.id&&req.currentUser.role !== userRoles.ADMIN){
         //console.log("property.owner ||| ",typeof(property.owner.toString()),":  ",property.owner);
         //console.log("req.currentUser.id ||| ",typeof(req.currentUser.id),":  ",req.currentUser.id);
         const error = appError.create("Unauthorized",401,httpStatus.FAIL);
