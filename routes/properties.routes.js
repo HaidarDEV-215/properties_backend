@@ -8,6 +8,7 @@ const httpStatusText = require('../utils/HTTP.status.text.js');
 const propertyImagesUpload = require('../helperFunctions/propertiesImagesUpload.js');//it uses multer
 const {propertyValiationSchema} = require('../helperFunctions/propertyValidationSchema.js');
 const {propertyValidationHandler} = require('../middlewares/propertyHandler.js')
+const checkDailyPostLimit = require('../middlewares/checkDailyPostLimit.js');
 
 router.route('/')
                 .get(
@@ -16,6 +17,7 @@ router.route('/')
                 .post(
                     verifyToken,
                     propertyImagesUpload.array('images',10),//it uses multer
+                    checkDailyPostLimit,
                     propertyValiationSchema(),
                     propertyValidationHandler,
                     propertiesControls.addProperty)
