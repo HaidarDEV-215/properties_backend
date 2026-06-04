@@ -5,6 +5,7 @@ const asyncWrapper = require('../middlewares/asyncFunctions.handler.js');
 const propertyLikeAction = require('../helperFunctions/propertyLikeAction.js');
 const getLikesActors = require('../helperFunctions/getLikesActors.js');
 const checkAndEncreaseViews = require('../helperFunctions/checkAndEncreaseViews.js');
+const {deletedPropertyImagesCleaner} = require('../helperFunctions/tosImageCleaner.js');
 const { MongoCryptAzureKMSRequestError, ReturnDocument } = require('mongodb');
 const fs = require('fs');
 const path = require('path');
@@ -84,13 +85,7 @@ const deleteProperty = asyncWrapper(async(req,res,next)=>{
         const error = appError.create('this property cannot be found',404,httpStatus.FAIL);
         return next(error);
     }
-    const imagesFolder = path.join(__dirname,'..');
-    proptoDelete.images.forEach(image => {
-        fs.unlink(path.join(imagesFolder,image),(err)=>{
-            const error = appError.create(`error while deleting property images`,500,httpStatus.FAIL);
-            return next(error);                 
-        });
-    });
+    await deletedPropertyImagesCleaner(proptoDelete.images,next);
     res.status(200).json({status:httpStatus.SUCCESS,data:{message:'property deleted successfuly'}});
 });
 

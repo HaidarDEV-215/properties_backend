@@ -3,15 +3,10 @@ const httpStatusText = require('../utils/HTTP.status.text.js');
 const appError = require('../utils/appError.js')
 const fs = require ('fs');
 
-const userValidationHandler = (req,res,next)=>{
+const userValidationHandler = async (req,res,next)=>{
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        if(req.file){
-            fs.unlink(req.file.path,(err)=>{
-                const error = appError.create(`error while deleting user image`,500,httpStatusText.FAIL);
-                return next(error);
-            })
-        }
+        await rejectedUserImageCleaner(req,res,next);
         const error = appError.create(errors.array(),400,httpStatusText.FAIL);
         return next(error);
     }

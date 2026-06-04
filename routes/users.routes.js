@@ -5,7 +5,7 @@ const authorizeUserAction = require('../middlewares/authorizeCurrentUserAccountA
 const httpStatusText = require('../utils/HTTP.status.text.js');
 const router = express.Router();
 const appError = require('../utils/appError.js');
-const uploadUserImage = require('../helperFunctions/userImageUpload.js');//it uses multer
+const {userAvatarUploader} = require('../middlewares/images.uploader.js');
 const {userValidationHandler} = require('../middlewares/userValidationHandler.js');
 const {userValidationSchema} = require('../helperFunctions/userValidationSchema.js');
 
@@ -16,7 +16,7 @@ router.route('/')
 
 router.route('/register')
             .post(
-                uploadUserImage.single('avatar'),//it uses multer
+                userAvatarUploader.single('avatar'),//it uses multer
                 userValidationSchema(),
                 userValidationHandler,
                 usersControler.register)
@@ -52,7 +52,7 @@ router.route('/:userId')
 
 router.route('/updateAvatar/:userId')
             .patch(verifyToken,
-                uploadUserImage.single('avatar'),
+                userAvatarUploader.single('avatar'),
                 authorizeUserAction,
                 usersControler.updateUserAvatar);
 

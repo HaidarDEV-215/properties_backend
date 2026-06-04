@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
 const addToBlackList = require('../helperFunctions/addToBlackList.js');
 const generateJWT = require('../utils/generateJWT.js');
+const {deletedUserImageCleaner} = require('../helperFunctions/tosImageCleaner.js');
 const userRoles = require('../utils/userRoles.js');
 const { isEmpty } = require('validator');
 const fs = require('fs');
@@ -103,16 +104,13 @@ const login = asyncWrapper( async (req,res,next)=>{
 const deleteAccount =asyncWrapper(async (req,res,next)=>{
     const userId = req.params.userId;
     const usertoDelete = await User.findByIdAndDelete(userId);
-    if(usertoDelete&&usertoDelete.avatar!='uploads/defaultUserAvatar.png'){
-        const avatarPath = path.join(__dirname,'..',usertoDelete.avatar);
-        fs.unlink(avatarPath,(err)=>{
-            console.log(err);            
-        });
-        console.log('deleted successfuly');
-    }
     if(!usertoDelete){
         const error = appError.create('this user cannot be found',404,httpStatus.FAIL);
         return next(error);
+    }
+    if(usertoDelete&&usertoDelete.avatar!='uploads/defaultUserAvatar.png'){
+        const avatarPath = path.join(__dirname,'..',usertoDelete.avatar);
+        await deletedUserImageCleaner(avatarPath,next);
     }
     await deleteRelatedProperties(req,res,next);
     //console.log(typeof(usertoDelete._id), usertoDelete._id);
@@ -159,7 +157,7 @@ const updateUserAvatar = asyncWrapper( async (req,res,next) =>{
     if(user.avatar !== 'uploads/defaultUserAvatar.png'){
         const oldAvatarPath = path.join(__dirname,'..',user.avatar);
         fs.unlink(oldAvatarPath,(err)=>{
-            console.error(err);            
+            //console.error(err);            
         })
     }
     //console.log("the file : ",req.file.filename)
