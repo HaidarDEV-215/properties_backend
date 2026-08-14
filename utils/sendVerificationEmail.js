@@ -13,7 +13,6 @@ module.exports = (userEmail,code)=>{
         port:587,
         secure:false
     });
-    
 
     const mailOptions = {
         from:process.env.APP_EMAIL,

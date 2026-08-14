@@ -9,8 +9,6 @@ const verifyToken = async (req,res,next)=>{
         const error = appError.create('token is required',401,httpStatus.ERROR);
         return next(error)
     }
-    //Authorizaton : Bearer kjdsnviness;mgmi4r59234wtk943.r53443r3t3t43tr3/t43t8rjtw
-    //split(' ')[1] will take the scound part of Authorization request header that is the token
     const token = auth.split(' ')[1];
     try{
         const blockedToken = await TokenBlackList.findOne({token});
@@ -24,7 +22,5 @@ const verifyToken = async (req,res,next)=>{
         const error = appError.create(err.message,401,httpStatus.ERROR);
         return next(error)
     }
-    //console.log('token:   ',token);
-    //console.log('decoded token:    ',decodedToken);    
 }
 module.exports = verifyToken

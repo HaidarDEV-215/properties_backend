@@ -10,24 +10,20 @@ const usersRouter = require('./routes/users.routes.js');
 const propertiesRouter = require('./routes/properties.routes.js');
 const passwordRouter = require('./routes/password.routes.js');
 const reportRouter = require('./routes/reports.routes.js');
-
 const httpStatusText = require('./utils/HTTP.status.text.js');
 
+//Run Application
 const app= express();
-
 app.use(cors());
 app.use('/uploads',express.static(path.join(__dirname,'uploads')))
 
-// const uri = "mongodb://localhost/hotel";
-// const port = 3020;
+//Constants
 const url = process.env.MONGO_DB_URL;
 const port = process.env.PORT;
 mongoose.connect(url).catch((err)=>{console.log(err.message)})
                      .then(()=>{console.log(`connected successfuly`)})
 
 app.use(express.json());
-
-
 
 // program routing
 app.use('/password',passwordRouter);
@@ -44,7 +40,6 @@ app.all(/.*/,(req,res,next)=>{/////////// when an error in urls?
 app.use((error,req,res,next)=>{
     res.status(error.statusCode || 500).json({status:error.statusText || httpStatusText.ERROR,message:error.message,data:null,code:error.statusCode||500})
 })
-
 
 app.listen(port,()=>{
     console.log(`listening to port ${port}`);    

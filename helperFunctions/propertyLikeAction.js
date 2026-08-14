@@ -25,6 +25,9 @@ module.exports = async(req,res,next,property,choice)=>{
         if(oldLike){
             await Like.deleteOne({user:user,property:propertyId});
             property.likes -=1;
+            if (property.likes < 0){
+                property.likes = 0;
+            }
         }
     }
     return property;
